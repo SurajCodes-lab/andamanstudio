@@ -1,26 +1,548 @@
 @import "tailwindcss";
 
+/* ============================================================
+   Andaman Studio — Bright Editorial Gallery design tokens
+   Light-first. Photography is the hero; styling is seasoning.
+   ============================================================ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* DARK-DOMINANT warm charcoal — "clubroom contrast" luxury.
+     Deep charcoal surfaces, cream text, vivid gold; colour photos pop. */
+  --paper: #14110b;   /* page background — deep warm charcoal */
+  --surface: #1e1810; /* raised cards / panels */
+  --ivory: #1a150d;   /* alt band */
+  --sand: #241d12;    /* warmer raised band */
+  --shell: #181309;
+  /* Text — warm cream */
+  --ink: #f3ead7;
+  --ink-soft: #c6bba2;
+  --ink-mute: #8f8571;
+  --line: rgba(243, 234, 215, 0.13);
+  /* Deepest near-black sections — footer, lightbox */
+  --ink-deep: #0c0a06;
+  --ink-deep-2: #16120b;
+  --on-deep: #f3ead7;
+  --on-deep-soft: #c6bba2;
+  --on-deep-mute: #8f8571;
+  --deep-line: rgba(243, 234, 215, 0.13);
+  /* THE accent — vivid metallic gold (bright on dark). Former */
+  /* teal/aqua/coral remap to gold/charcoal so utilities stay coherent. */
+  --gold: #d8a82f;
+  --gold-soft: #efc66c;
+  --teal: #d8a82f;        /* → gold */
+  --teal-deep: #16120b;   /* → charcoal band */
+  --teal-ink: #0c0a06;    /* → near-black */
+  --aqua: #e0b342;        /* → bright gold */
+  --aqua-light: #efc66c;
+  --coral: #d8a82f;       /* → gold */
+  --coral-soft: #efc66c;
+
+  /* --- Legacy dark tokens (kept so un-migrated bits compile; */
+  /*     removed in cleanup once unused) --------------------- */
+  --noir: #07100e;
+  --noir-2: #0c1a17;
+  --noir-3: #112523;
+  --noir-line: rgba(241, 236, 225, 0.12);
+  --cream: #f2ede2;
+  --cream-soft: #c2c6bd;
+  --cream-mute: #7f877e;
+
+  --nav-h: 80px;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-paper: var(--paper);
+  --color-surface: var(--surface);
+  --color-ivory: var(--ivory);
+  --color-sand: var(--sand);
+  --color-shell: var(--shell);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-ink-mute: var(--ink-mute);
+  --color-ink-deep: var(--ink-deep);
+  --color-on-deep: var(--on-deep);
+  --color-on-deep-soft: var(--on-deep-soft);
+  --color-on-deep-mute: var(--on-deep-mute);
+  --color-line: var(--line);
+  --color-teal: var(--teal);
+  --color-teal-deep: var(--teal-deep);
+  --color-teal-ink: var(--teal-ink);
+  --color-aqua: var(--aqua);
+  --color-aqua-light: var(--aqua-light);
+  --color-gold: var(--gold);
+  --color-gold-soft: var(--gold-soft);
+  --color-coral: var(--coral);
+  --color-coral-soft: var(--coral-soft);
+  /* legacy */
+  --color-noir: var(--noir);
+  --color-noir-2: var(--noir-2);
+  --color-noir-3: var(--noir-3);
+  --color-cream: var(--cream);
+  --color-cream-soft: var(--cream-soft);
+  --color-cream-mute: var(--cream-mute);
+
+  --color-background: var(--paper);
+  --color-foreground: var(--ink);
+
+  --font-serif: var(--font-cormorant);
+  --font-sans: var(--font-inter);
+  --font-syne: var(--font-syne);
+
+  --breakpoint-xs: 30rem;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+* {
+  border-color: var(--line);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Guard against stray horizontal scroll from decorative fixed/absolute
+   elements (e.g. the off-screen custom cursor). `clip` keeps the viewport
+   as the scroll container, so position: sticky still works. */
+html,
+body {
+  overflow-x: clip;
+}
+
+:focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* Custom cursor — hide native pointer on fine-pointer devices */
+.has-cursor,
+.has-cursor * {
+  cursor: none !important;
+}
+.has-cursor input,
+.has-cursor textarea,
+.has-cursor select {
+  cursor: text !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
   }
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  font-feature-settings: "ss01", "cv01";
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Subtle paper grain — editorial print warmth, not cinematic murk */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  pointer-events: none;
+  opacity: 0.035;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+@media (prefers-reduced-motion: reduce) {
+  body::after { display: none; }
+}
+
+/* Lenis smooth scroll */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+/* Typography ----------------------------------------------------- */
+.font-serif {
+  font-family: var(--font-cormorant), ui-serif, Georgia, serif;
+}
+
+.display {
+  font-family: var(--font-cormorant), ui-serif, Georgia, serif;
+  font-weight: 500;
+  line-height: 1.02;
+  letter-spacing: -0.015em;
+}
+
+.eyebrow {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  font-weight: 500;
+  color: var(--teal);
+}
+
+.meta {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.64rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+.mono {
+  font-family: var(--font-mono), ui-monospace, monospace;
+}
+
+/* Section themes ------------------------------------------------- */
+/* Light is the default idiom; alternating warm bands. */
+.sec-paper {
+  background: var(--paper);
+  color: var(--ink);
+}
+.sec-ivory {
+  background: var(--ivory);
+  color: var(--ink);
+}
+.sec-sand {
+  background: var(--sand);
+  color: var(--ink);
+}
+.sec-light {
+  background: var(--ivory);
+  color: var(--ink);
+}
+/* The one dark idiom — footer anchor, lightbox, rare feature band. */
+.sec-deep {
+  background: var(--ink-deep);
+  color: var(--on-deep);
+  --ink: var(--on-deep);
+  --ink-soft: var(--on-deep-soft);
+  --ink-mute: var(--on-deep-mute);
+  --line: var(--deep-line);
+}
+.ctx-deep {
+  --ink: var(--on-deep);
+  --ink-soft: var(--on-deep-soft);
+  --ink-mute: var(--on-deep-mute);
+  --line: var(--deep-line);
+}
+/* In the dark theme there is no "light card" — neutralise to cream text */
+.ctx-light {
+  --ink: #f3ead7;
+  --ink-soft: #c6bba2;
+  --ink-mute: #8f8571;
+  --line: rgba(243, 234, 215, 0.13);
+}
+
+/* Legacy aliases kept until cleanup ----------------------------- */
+.ctx-dark {
+  --ink: var(--on-deep);
+  --ink-soft: var(--on-deep-soft);
+  --ink-mute: var(--on-deep-mute);
+  --line: var(--deep-line);
+}
+.sec-dark,
+.sec-dark-2 {
+  background: var(--ink-deep);
+  color: var(--on-deep);
+  --ink: var(--on-deep);
+  --ink-soft: var(--on-deep-soft);
+  --ink-mute: var(--on-deep-mute);
+  --line: var(--deep-line);
+}
+
+/* Dramatic black feature bands (former colour bands) ----------- */
+.bg-tropical {
+  background: radial-gradient(120% 140% at 80% 0%, #2c2417 0%, #1a160f 60%);
+  color: var(--on-deep);
+  --ink: var(--on-deep);
+  --ink-soft: var(--on-deep-soft);
+  --ink-mute: var(--on-deep-mute);
+  --line: var(--deep-line);
+}
+.bg-sunset {
+  background: radial-gradient(120% 140% at 20% 100%, #2c2417 0%, #1a160f 65%);
+  color: var(--on-deep);
+  --ink: var(--on-deep);
+  --ink-soft: var(--on-deep-soft);
+  --ink-mute: var(--on-deep-mute);
+  --line: var(--deep-line);
+}
+.bg-lagoon {
+  background: linear-gradient(160deg, #221b11 0%, #14110b 100%);
+}
+/* Subtle charcoal tints for section rhythm */
+.sec-tint-aqua {
+  background: linear-gradient(180deg, #17130c 0%, #1e1810 100%);
+  color: var(--ink);
+}
+.sec-tint-sand {
+  background: linear-gradient(180deg, #1a150d 0%, #241d12 100%);
+  color: var(--ink);
+}
+
+/* Soft glows — monochrome / gold whisper */
+.glow {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(90px);
+  opacity: 0.5;
+  pointer-events: none;
+  z-index: 0;
+}
+.glow-teal { background: radial-gradient(circle, rgba(176,132,58,0.5), transparent 70%); }
+.glow-gold { background: radial-gradient(circle, var(--gold-soft), transparent 70%); }
+.glow-coral { background: radial-gradient(circle, rgba(0,0,0,0.5), transparent 70%); }
+
+/* Accents & rules ----------------------------------------------- */
+.text-gradient {
+  background: linear-gradient(100deg, var(--gold) 0%, var(--gold-soft) 50%, var(--gold) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ---------- Full-colour photography on a mono layout ------------
+   Photography shows in full colour (it provides ALL the colour);
+   the surfaces, type and chrome stay black / white / grey. A gentle
+   contrast lift keeps images crisp against the paper. -------------- */
+main img,
+main video {
+  filter: contrast(1.08) saturate(1.18);
+}
+.gold-rule {
+  background: linear-gradient(to right, transparent, var(--gold), transparent);
+}
+.hairline {
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--line), transparent);
+}
+
+/* Oversized editorial index numerals — now ink-tinted outline */
+.index-numeral {
+  font-family: var(--font-cormorant), serif;
+  font-style: italic;
+  line-height: 0.8;
+  color: transparent;
+  -webkit-text-stroke: 1.5px var(--sand);
+}
+.index-numeral-aqua {
+  -webkit-text-stroke-color: var(--teal);
+}
+.numeral-fill {
+  font-family: var(--font-cormorant), serif;
+  font-style: italic;
+  line-height: 0.8;
+  background: linear-gradient(160deg, var(--teal), var(--aqua) 55%, var(--gold));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Camera crop-mark corners — light-friendly */
+.framed {
+  position: relative;
+}
+.framed::before,
+.framed::after {
+  content: "";
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  z-index: 3;
+  pointer-events: none;
+  border-color: rgba(252, 251, 248, 0.85);
+}
+.framed::before {
+  top: 10px;
+  left: 10px;
+  border-top: 1.5px solid;
+  border-left: 1.5px solid;
+}
+.framed::after {
+  bottom: 10px;
+  right: 10px;
+  border-bottom: 1.5px solid;
+  border-right: 1.5px solid;
+}
+
+.v-label {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  font-size: 0.66rem;
+}
+
+/* Pill tag — light by default */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid var(--line);
+  border-radius: 9999px;
+  padding: 0.4rem 0.9rem;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.66rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--teal);
+  background: rgba(14, 140, 127, 0.06);
+}
+.tag-deep {
+  border-color: var(--deep-line);
+  color: var(--aqua-light);
+  background: rgba(17, 201, 178, 0.08);
+}
+.tag-light {
+  border-color: var(--line);
+  color: var(--teal);
+  background: rgba(255, 255, 255, 0.6);
+}
+
+/* Glass ---------------------------------------------------------- */
+.glass {
+  background: rgba(36, 30, 19, 0.5);
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  border: 1px solid rgba(243, 234, 215, 0.16);
+  box-shadow: 0 8px 40px -16px rgba(0, 0, 0, 0.5);
+}
+.glass-deep {
+  background: rgba(28, 24, 18, 0.45);
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  border: 1px solid rgba(244, 236, 221, 0.18);
+}
+/* legacy alias */
+.glass-dark {
+  background: rgba(28, 24, 18, 0.45);
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  border: 1px solid rgba(244, 236, 221, 0.18);
+}
+/* Navbar glass — dark charcoal frosted */
+.glass-nav {
+  background: rgba(18, 15, 9, 0.7);
+  backdrop-filter: blur(22px) saturate(160%);
+  -webkit-backdrop-filter: blur(22px) saturate(160%);
+  border-bottom: 1px solid rgba(243, 234, 215, 0.1);
+}
+
+/* Animations ----------------------------------------------------- */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.animate-marquee {
+  animation: marquee 32s linear infinite;
+}
+@keyframes marquee-reverse {
+  from { transform: translateX(-50%); }
+  to { transform: translateX(0); }
+}
+.animate-marquee-reverse {
+  animation: marquee-reverse 38s linear infinite;
+}
+
+@keyframes slow-zoom {
+  from { transform: scale(1); }
+  to { transform: scale(1.12); }
+}
+.animate-slow-zoom {
+  animation: slow-zoom 18s ease-out forwards;
+}
+
+@keyframes float-up {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+.animate-float {
+  animation: float-up 4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee,
+  .animate-slow-zoom,
+  .animate-float { animation: none; }
+}
+
+/* Kinetic text — char-by-char reveal on scroll */
+.kinetic .char {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(0.5em) rotateX(-35deg);
+  transition: opacity 0.55s ease, transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.kinetic.kt-in .char {
+  opacity: 1;
+  transform: translateY(0) rotateX(0);
+}
+@media (prefers-reduced-motion: reduce) {
+  .kinetic .char { opacity: 1 !important; transform: none !important; }
+}
+
+/* Sticky filter bar — tablet+ only (would cover tiles on short mobiles) */
+@media (min-width: 640px) {
+  .sticky-services {
+    position: sticky;
+    top: 84px;
+    z-index: 20;
+    background: var(--paper);
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+  }
+}
+
+.link-underline {
+  position: relative;
+}
+.link-underline::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 0;
+  height: 1px;
+  background: currentColor;
+  transition: width 0.35s ease;
+}
+.link-underline:hover::after {
+  width: 100%;
+}
+
+/* Image reveal — true-to-source colour, gentle hover only.
+   (The old cinematic darken/grade filter is intentionally removed.) */
+.img-zoom {
+  transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.group:hover .img-zoom {
+  transform: scale(1.05);
+}
+
+::selection {
+  background: var(--gold-soft);
+  color: var(--ink);
+}
+
+/* Slim, elegant scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--ivory);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--sand);
+  border-radius: 999px;
+  border: 3px solid var(--ivory);
 }

@@ -39,3 +39,24 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# --- QA / tooling artifacts (not part of the website) ---
+# Playwright + Puppeteer QA tests and screenshot scripts
+/tests/
+/scripts/
+playwright.config.ts
+/playwright-report/
+/test-results/
+/.playwright/
+
+# Captured screenshots / audit output
+/shots/
+/shots-*/
+
+# Design + working docs
+DESIGN-BLUEPRINT.md
+
+# Local logs
+*.log
+dev.log
+prod.log

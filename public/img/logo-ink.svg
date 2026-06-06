@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Andaman." xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 129 42.6">
+  <defs>
+    <style>
+      .cls-1 {
+        font-family: Montserrat-Regular, Montserrat;
+        font-size: 5.8px;
+        letter-spacing: .2em;
+      }
+
+      .cls-1, .cls-2, .cls-3 {
+        fill: #16201e;
+      }
+
+      .cls-4 {
+        fill: #16201e;
+      }
+
+      .cls-4, .cls-3 {
+        stroke-width: 0px;
+      }
+
+      .cls-2 {
+        font-family: Aniuk-Bold, Aniuk;
+        font-size: 11.6px;
+        font-weight: 700;
+        letter-spacing: 0em;
+      }
+
+      .cls-5 {
+        stroke-width: .5px;
+      }
+
+      .cls-5, .cls-6 {
+        fill: none;
+        stroke: #16201e;
+        stroke-miterlimit: 10;
+      }
+
+      .cls-6 {
+        stroke-width: .4px;
+      }
+    </style>
+  </defs>
+  <rect class="cls-3" x="39.5" y="1.4" width=".5" height="32.5"/>
+  <path class="cls-5" d="M33.9,27.5h-12.3c-2,0-3.6-1.6-3.6-3.6v-12.9c0-2,1.6-3.6,3.6-3.6h17.4"/>
+  <path class="cls-6" d="M38.6,13.1c-4.3.3-6.1,3.8-6.2,6.7s2.6,6.8,6.2,7"/>
+  <path class="cls-6" d="M38.6,10.5c-5.4,0-8.5,5.4-8.6,9.3s4,9.4,8.6,9.3"/>
+  <text class="cls-2" transform="translate(43.9 14.2)"><tspan x="0" y="0">Andaman.</tspan><tspan x="0" y="13.2">Studio</tspan></text>
+  <text class="cls-1" transform="translate(17.2 40.4)"><tspan x="0" y="0">Capture the moments</tspan></text>
+</svg>
