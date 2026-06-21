@@ -4,21 +4,21 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { nav, whatsappLink, site, telLink } from "@/data/site";
-import { categoryNav } from "@/data/categories";
-import { catalog, formatINR } from "@/data/catalog";
-import { services } from "@/data/services";
-import { getServiceTheme } from "@/data/serviceThemes";
-import SubjectIcon from "./SubjectIcon";
+import { nav } from "@/data/site";
+import SubjectIcon, { type IconName } from "./SubjectIcon";
 
 const primary = nav.filter((n) => n.href !== "/");
 
-const priceFor = (slug: string) => {
-  const c = catalog.find((cat) => cat.id === slug);
-  return c ? formatINR(Math.min(...c.products.map((p) => p.price))) : "";
+type NavData = {
+  categories: { label: string; short: string; href: string; slug: string; fromPrice: string }[];
+  services: { slug: string; title: string; icon: IconName; accent: string }[];
+  contact: { phone: string; tel: string; whatsapp: string };
 };
 
-export default function Navbar() {
+export default function Navbar({ data }: { data: NavData }) {
+  const categoryNav = data.categories;
+  const services = data.services;
+  const contact = data.contact; // phone/tel/whatsapp from the DB (admin Settings)
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [menu, setMenu] = useState<string | null>(null); // open dropdown href
@@ -35,8 +35,12 @@ export default function Navbar() {
 
   useEffect(() => {
     document.documentElement.style.overflow = open ? "hidden" : "";
+    // Lets global CSS hide the floating book bar / social cluster while the
+    // full-screen menu is open (they sit above the drawer otherwise).
+    document.documentElement.classList.toggle("menu-open", open);
     return () => {
       document.documentElement.style.overflow = "";
+      document.documentElement.classList.remove("menu-open");
     };
   }, [open]);
 
@@ -123,7 +127,7 @@ export default function Navbar() {
                                 <span className="mono text-[0.62rem] text-gold">{String(i + 1).padStart(2, "0")}</span>
                                 <span className="font-serif text-xl font-semibold text-on-deep transition-colors group-hover/item:text-gold">{c.label}</span>
                               </span>
-                              <span className="mono text-[0.72rem] font-medium text-gold-soft">from {priceFor(c.slug)}</span>
+                              <span className="mono text-[0.72rem] font-medium text-gold-soft">from {c.fromPrice}</span>
                             </Link>
                           ))}
                         </div>
@@ -142,15 +146,12 @@ export default function Navbar() {
                           <Link href="/services" className="mono text-[0.66rem] uppercase tracking-[0.16em] text-gold hover:text-gold-soft">View all →</Link>
                         </div>
                         <div className="grid grid-cols-2 gap-x-4 gap-y-0.5">
-                          {services.map((s) => {
-                            const st = getServiceTheme(s.slug);
-                            return (
-                              <Link key={s.slug} href={`/${s.slug}`} className="group/item flex items-center gap-3 rounded-xl px-3 py-2.5 transition-colors hover:bg-gold/10">
-                                <span style={{ color: st.accent }}><SubjectIcon name={st.icon} className="h-4 w-4" /></span>
-                                <span className="font-serif text-base text-on-deep transition-colors group-hover/item:text-gold">{s.title}</span>
-                              </Link>
-                            );
-                          })}
+                          {services.map((s) => (
+                            <Link key={s.slug} href={`/${s.slug}`} className="group/item flex items-center gap-3 rounded-xl px-3 py-2.5 transition-colors hover:bg-gold/10">
+                              <span style={{ color: s.accent }}><SubjectIcon name={s.icon} className="h-4 w-4" /></span>
+                              <span className="font-serif text-base text-on-deep transition-colors group-hover/item:text-gold">{s.title}</span>
+                            </Link>
+                          ))}
                         </div>
                       </motion.div>
                     )}
@@ -163,15 +164,17 @@ export default function Navbar() {
           {/* Right: phone + CTA + mobile toggle */}
           <div className="flex shrink-0 items-center gap-4">
             <a
-              href={telLink}
+              href={contact.tel}
               className="mono hidden items-center gap-1.5 text-[0.74rem] tracking-[0.08em] text-on-deep transition-colors hover:text-gold xl:inline-flex"
             >
-              <span className="text-gold">✆</span>
-              {site.phones[0]}
+              <svg viewBox="0 0 24 24" className="h-3.5 w-3.5 text-gold" fill="currentColor" aria-hidden>
+                <path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.05-.24 11.36 11.36 0 003.55.57 1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1 11.36 11.36 0 00.57 3.55 1 1 0 01-.24 1.05l-2.2 2.2z" />
+              </svg>
+              {contact.phone}
             </a>
             <span aria-hidden className="hidden h-5 w-px bg-line xl:block" />
             <a
-              href={whatsappLink()}
+              href={contact.whatsapp}
               target="_blank"
               rel="noopener noreferrer"
               className="font-syne group hidden items-center gap-2 rounded-full bg-gold px-6 py-2.5 text-[0.72rem] font-bold uppercase tracking-[0.08em] text-ink-deep transition-colors duration-300 hover:bg-gold-soft sm:inline-flex"
@@ -207,49 +210,96 @@ export default function Navbar() {
             transition={{ duration: 0.35 }}
             style={{ background: "#100d08" }}
             id="mobile-menu"
-            className="fixed inset-0 z-40 flex flex-col justify-center overflow-y-auto px-8 py-24 lg:hidden"
+            className="fixed inset-0 z-40 flex flex-col overflow-y-auto px-8 pb-16 pt-28 lg:hidden"
           >
-            <ul className="flex flex-col gap-1">
-              {primary.map((item, i) => (
-                <motion.li
-                  key={item.href}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.05 * i + 0.08, duration: 0.45 }}
-                >
-                  <Link href={item.href} className="font-serif block py-1.5 text-4xl text-on-deep sm:text-5xl">
-                    {item.label}
-                  </Link>
-                </motion.li>
-              ))}
+            {/* Ambient gold glow */}
+            <span aria-hidden className="glow glow-gold pointer-events-none absolute -right-20 -top-10 h-64 w-64 opacity-25" />
+
+            <motion.p
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.05 }}
+              className="eyebrow mb-2 text-gold/80"
+            >
+              Menu
+            </motion.p>
+
+            {/* Primary nav — numbered, editorial, with dividers */}
+            <ul className="flex flex-col border-t border-line/40">
+              {primary.map((item, i) => {
+                const active =
+                  item.href === "/packages"
+                    ? pathname === "/packages" || pathname.startsWith("/category/")
+                    : pathname === item.href;
+                return (
+                  <motion.li
+                    key={item.href}
+                    initial={{ opacity: 0, x: 24 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.05 * i + 0.1, duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+                  >
+                    <Link
+                      href={item.href}
+                      className="group flex items-center justify-between border-b border-line/40 py-3.5"
+                    >
+                      <span className="flex items-baseline gap-4">
+                        <span className="mono text-[0.7rem] text-gold/60">{String(i + 1).padStart(2, "0")}</span>
+                        <span className={`font-serif text-4xl leading-none transition-colors duration-300 group-hover:text-gold ${active ? "text-gold" : "text-on-deep"}`}>
+                          {item.label}
+                        </span>
+                      </span>
+                      <span className={`text-xl text-gold transition-all duration-300 ${active ? "translate-x-0 opacity-100" : "-translate-x-2 opacity-0 group-hover:translate-x-0 group-hover:opacity-100"}`}>
+                        →
+                      </span>
+                    </Link>
+                  </motion.li>
+                );
+              })}
             </ul>
 
-            <div className="hairline my-7" />
+            {/* By package — pill chips */}
+            <motion.div
+              initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.08 * primary.length + 0.1, duration: 0.45 }}
+            >
+              <p className="eyebrow mb-3 mt-8 text-on-deep/50">By package</p>
+              <ul className="flex flex-wrap gap-2">
+                {categoryNav.map((item) => (
+                  <li key={item.href}>
+                    <Link
+                      href={item.href}
+                      className="inline-block rounded-full border border-line px-3.5 py-1.5 text-[0.72rem] uppercase tracking-[0.12em] text-on-deep/70 transition-colors duration-300 hover:border-gold hover:bg-gold/10 hover:text-gold"
+                    >
+                      {item.short}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </motion.div>
 
-            <p className="eyebrow mb-4">By package</p>
-            <ul className="flex flex-wrap gap-x-6 gap-y-2">
-              {categoryNav.map((item) => (
-                <li key={item.href}>
-                  <Link href={item.href} className="text-sm uppercase tracking-[0.16em] text-on-deep/60 hover:text-gold">
-                    {item.short}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-
-            <div className="mt-9 flex flex-wrap items-center gap-4">
+            {/* Pinned footer: CTA + phone */}
+            <motion.div
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+              transition={{ delay: 0.08 * primary.length + 0.2, duration: 0.5 }}
+              className="mt-auto pt-10"
+            >
               <a
-                href={whatsappLink()}
+                href={contact.whatsapp}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="font-syne inline-block w-fit rounded-full bg-gold px-7 py-3 text-sm font-bold uppercase tracking-[0.1em] text-ink-deep"
+                className="font-syne group flex w-full items-center justify-center gap-2 rounded-full bg-gold px-7 py-3.5 text-sm font-bold uppercase tracking-[0.1em] text-ink-deep transition-colors duration-300 hover:bg-gold-soft"
               >
-                Book a shoot →
+                Book a shoot
+                <span className="transition-transform duration-300 group-hover:translate-x-0.5">→</span>
               </a>
-              <a href={telLink} className="mono text-sm text-on-deep/70 hover:text-gold">
-                {site.phones[0]}
+              <a
+                href={contact.tel}
+                className="mono mt-5 flex items-center justify-center gap-2 text-sm text-on-deep/70 transition-colors hover:text-gold"
+              >
+                <svg viewBox="0 0 24 24" className="h-3.5 w-3.5 text-gold" fill="currentColor" aria-hidden>
+                  <path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.05-.24 11.36 11.36 0 003.55.57 1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1 11.36 11.36 0 00.57 3.55 1 1 0 01-.24 1.05l-2.2 2.2z" />
+                </svg>
+                {contact.phone}
               </a>
-            </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>

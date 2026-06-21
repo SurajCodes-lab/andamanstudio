@@ -2,7 +2,6 @@
 
 import { motion } from "motion/react";
 import { type Product, formatINR } from "@/data/catalog";
-import { whatsappLink } from "@/data/site";
 import type { SignatureKind } from "@/data/categoryThemes";
 
 // Per-theme package card — each shoot type gets its own pricing style.
@@ -15,9 +14,7 @@ export default function ProductCard({
   index?: number;
   variant?: SignatureKind;
 }) {
-  const enquire = whatsappLink(
-    `Hi Andaman Studio! I'm interested in the "${product.name}" package (${formatINR(product.price)}).`
-  );
+  const enquireHref = `/contact?pkg=${encodeURIComponent(product.name)}`;
 
   const wrap = (children: React.ReactNode, extra = "") => (
     <motion.div
@@ -31,16 +28,26 @@ export default function ProductCard({
     </motion.div>
   );
 
-  const cta = (label = "Enquire on WhatsApp", cls = "") => (
-    <a
-      href={enquire}
-      target="_blank"
-      rel="noopener noreferrer"
-      className={`mt-7 inline-flex items-center justify-center px-5 py-3 text-[0.74rem] font-semibold uppercase tracking-[0.14em] transition-colors duration-300 ${cls}`}
-    >
-      {label}
-    </a>
-  );
+  // Two clear actions on every card: Book now (date-aware booking flow) + Enquire (lead form).
+  const cta = (_label = "", cls = "") => {
+    const round = cls.includes("rounded-full") ? "rounded-full" : "";
+    return (
+      <div className="mt-7 flex flex-col gap-2 sm:flex-row">
+        <a
+          href={`/book?pkg=${encodeURIComponent(product.name)}`}
+          className={`inline-flex flex-1 items-center justify-center px-5 py-3 text-[0.74rem] font-semibold uppercase tracking-[0.14em] transition-colors duration-300 ${cls || "bg-gold text-ink-deep hover:bg-gold-soft"} ${round}`}
+        >
+          Book now →
+        </a>
+        <a
+          href={enquireHref}
+          className={`inline-flex flex-1 items-center justify-center border border-line px-5 py-3 text-[0.74rem] font-semibold uppercase tracking-[0.14em] text-on-deep transition-colors duration-300 hover:border-gold hover:text-gold ${round}`}
+        >
+          Enquire
+        </a>
+      </div>
+    );
+  };
 
   const specs = (markClass: string) => (
     <ul className="mt-6 flex-1 space-y-2.5 border-t border-line pt-6">
@@ -64,7 +71,7 @@ export default function ProductCard({
         <h4 className="font-serif mt-3 text-2xl text-on-deep">{product.name}</h4>
         <p className="mono mt-2 text-3xl text-gold">{formatINR(product.price)}</p>
         {specs("mono text-gold mt-[2px] text-xs")}
-        {product.note && <p className="mt-4 text-xs italic text-on-deep/50">{product.note}</p>}
+        {product.note && <p className="mt-4 text-xs text-on-deep/50">{product.note}</p>}
         {cta("Request flight →", product.popular ? "bg-gold text-ink-deep hover:bg-gold-soft" : "border border-line text-on-deep hover:border-gold hover:text-gold")}
       </div>,
       ""
@@ -79,7 +86,7 @@ export default function ProductCard({
           <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-gold px-3 py-1 text-[0.58rem] uppercase tracking-[0.18em] text-ink-deep">Most loved</span>
         )}
         <h4 className="font-serif text-2xl text-on-deep">{product.name}</h4>
-        <p className="font-serif mt-2 text-4xl italic text-gold-soft">{formatINR(product.price)}</p>
+        <p className="font-serif mt-2 text-4xl text-gold-soft">{formatINR(product.price)}</p>
         <ul className="mx-auto mt-6 flex-1 space-y-2.5 border-t border-line pt-6 text-left">
           {product.specs.map((s) => (
             <li key={s} className="flex gap-3 text-sm text-on-deep/80">
@@ -88,7 +95,7 @@ export default function ProductCard({
             </li>
           ))}
         </ul>
-        {product.note && <p className="mt-4 text-xs italic text-on-deep/50">{product.note}</p>}
+        {product.note && <p className="mt-4 text-xs text-on-deep/50">{product.note}</p>}
         {cta("Begin your story →", product.popular ? "rounded-full bg-gold text-ink-deep hover:bg-gold-soft" : "rounded-full border border-line text-on-deep hover:border-gold hover:text-gold")}
       </div>,
       ""
@@ -104,7 +111,7 @@ export default function ProductCard({
           <h4 className="font-serif text-2xl text-on-deep">{product.name}</h4>
           <p className="font-serif mt-2 text-4xl text-gold-soft">{formatINR(product.price)}</p>
           {specs("text-gold-soft mt-[2px]")}
-          {product.note && <p className="mt-4 text-xs italic text-on-deep/50">{product.note}</p>}
+          {product.note && <p className="mt-4 text-xs text-on-deep/50">{product.note}</p>}
           {cta("Reserve the evening →", product.popular ? "rounded-full bg-gold text-ink-deep hover:bg-gold-soft" : "rounded-full border border-line text-on-deep hover:border-gold hover:text-gold")}
         </div>
       </div>,
@@ -119,7 +126,7 @@ export default function ProductCard({
         <h4 className="mono text-[0.7rem] uppercase tracking-[0.18em] text-on-deep/70">{product.name}</h4>
         <p className="display mt-1 text-5xl text-on-deep">{formatINR(product.price)}</p>
         {specs("text-gold mt-[2px]")}
-        {product.note && <p className="mt-4 text-xs italic text-on-deep/50">{product.note}</p>}
+        {product.note && <p className="mt-4 text-xs text-on-deep/50">{product.note}</p>}
         {cta("Book this →", product.popular ? "bg-gold text-ink-deep hover:bg-gold-soft" : "border border-line text-on-deep hover:border-gold hover:text-gold")}
       </div>,
       ""
@@ -142,7 +149,7 @@ export default function ProductCard({
             </li>
           ))}
         </ul>
-        {product.note && <p className="mt-4 text-xs italic text-on-deep/50">{product.note}</p>}
+        {product.note && <p className="mt-4 text-xs text-on-deep/50">{product.note}</p>}
         {cta("Enquire →", product.popular ? "bg-gold text-ink-deep hover:bg-gold-soft" : "border border-line text-on-deep hover:border-gold hover:text-gold")}
       </div>,
       ""
@@ -158,7 +165,7 @@ export default function ProductCard({
       <h4 className="font-serif text-2xl text-on-deep">{product.name}</h4>
       <p className="font-serif mt-2 text-4xl text-gold">{formatINR(product.price)}</p>
       {specs("text-gold mt-[2px]")}
-      {product.note && <p className="mt-4 text-xs italic text-on-deep/50">{product.note}</p>}
+      {product.note && <p className="mt-4 text-xs text-on-deep/50">{product.note}</p>}
       {cta("Enquire on WhatsApp", product.popular ? "rounded-full bg-gold text-ink-deep hover:bg-gold-soft" : "rounded-full border border-line text-on-deep hover:border-gold hover:text-gold")}
     </div>
   );

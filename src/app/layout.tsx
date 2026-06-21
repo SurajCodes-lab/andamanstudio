@@ -1,18 +1,27 @@
 import type { Metadata, Viewport } from "next";
-import { Cormorant_Garamond, Hanken_Grotesk, JetBrains_Mono, Syne } from "next/font/google";
+import { Fraunces, Hanken_Grotesk, JetBrains_Mono, Syne } from "next/font/google";
 import "./globals.css";
 import { site } from "@/data/site";
 import SmoothScroll from "@/components/SmoothScroll";
 import ScrollProgress from "@/components/ScrollProgress";
 import Cursor from "@/components/Cursor";
-import Navbar from "@/components/Navbar";
+import NavbarServer from "@/components/NavbarServer";
 import Footer from "@/components/Footer";
-import WhatsAppFab from "@/components/WhatsAppFab";
+import FloatingSocial from "@/components/FloatingSocial";
+import StickyBookBar from "@/components/StickyBookBar";
+import StickyEnquiry from "@/components/StickyEnquiry";
+import Preloader from "@/components/Preloader";
+import ChromeGate from "@/components/ChromeGate";
+import { SiteProvider } from "@/components/SiteProvider";
+import { getSite } from "@/lib/db/queries";
 
-const cormorant = Cormorant_Garamond({
+// Display/headline face — a modern high-contrast editorial serif for the
+// studio brand. Keeps the existing `--font-cormorant` CSS variable so all
+// `.display` / `.font-serif` rules pick it up with no further changes.
+const fraunces = Fraunces({
   variable: "--font-cormorant",
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  weight: ["400", "500", "600", "700"],
   style: ["normal", "italic"],
   display: "swap",
 });
@@ -72,9 +81,19 @@ export const viewport: Viewport = {
   colorScheme: "dark",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const s = await getSite();
+  const siteCtx = {
+    name: s.name,
+    email: s.email,
+    whatsapp: s.whatsapp,
+    phones: s.phones,
+    tagline: s.tagline,
+    social: s.social,
+    address: s.address,
+  };
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
@@ -96,20 +115,25 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="en" className={`${cormorant.variable} ${hanken.variable} ${jetbrains.variable} ${syne.variable}`}>
+    <html lang="en" className={`${fraunces.variable} ${hanken.variable} ${jetbrains.variable} ${syne.variable}`}>
       <body className="bg-paper text-ink min-h-screen antialiased">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
+        <SiteProvider value={siteCtx}>
+        <ChromeGate><Preloader /></ChromeGate>
         <SmoothScroll>
-          <Cursor />
-          <ScrollProgress />
-          <Navbar />
-          <main>{children}</main>
-          <Footer />
-          <WhatsAppFab />
+          <ChromeGate><Cursor /></ChromeGate>
+          <ChromeGate><ScrollProgress /></ChromeGate>
+          <ChromeGate><NavbarServer /></ChromeGate>
+          <main className="pb-20 sm:pb-0">{children}</main>
+          <ChromeGate><Footer /></ChromeGate>
+          <ChromeGate><FloatingSocial /></ChromeGate>
+          <ChromeGate><StickyEnquiry /></ChromeGate>
+          <ChromeGate><StickyBookBar /></ChromeGate>
         </SmoothScroll>
+        </SiteProvider>
       </body>
     </html>
   );

@@ -3,7 +3,9 @@ import PageHero from "@/components/PageHero";
 import Container from "@/components/Container";
 import Reveal from "@/components/Reveal";
 import ContactForm from "@/components/ContactForm";
-import { site, whatsappLink, telLink, mailLink } from "@/data/site";
+import { getSite } from "@/lib/db/queries";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Contact Us",
@@ -12,8 +14,13 @@ export const metadata: Metadata = {
   alternates: { canonical: "/contact" },
 };
 
-export default function ContactPage() {
-  const mapSrc = `https://www.google.com/maps?q=${encodeURIComponent(site.address.mapsQuery)}&output=embed`;
+export default async function ContactPage() {
+  const s = await getSite();
+  const mailLink = `mailto:${s.email}`;
+  const whatsappLink = () => `https://wa.me/${s.whatsapp}?text=${encodeURIComponent("Hi Andaman Studio! I'd like to plan a shoot.")}`;
+  const mapSrc =
+    s.address.mapEmbed?.trim() ||
+    `https://www.google.com/maps?q=${encodeURIComponent(s.address.mapsQuery)}&output=embed`;
 
   return (
     <>
@@ -35,14 +42,14 @@ export default function ContactPage() {
               <span className="eyebrow">Studio</span>
               <h2 className="display text-ink mt-3 text-4xl sm:text-5xl">Let&apos;s talk</h2>
               <p className="text-ink-soft mt-5 max-w-md leading-relaxed">
-                {site.shortDesc}
+                {s.shortDesc}
               </p>
 
               <div className="mt-12 space-y-8">
                 <Reveal>
                   <div>
                     <p className="eyebrow mb-2">Call / WhatsApp</p>
-                    {site.phones.map((p) => (
+                    {s.phones.map((p) => (
                       <a key={p} href={`tel:${p.replace(/\s/g, "")}`} className="block font-serif text-2xl text-ink hover:text-gold">
                         {p}
                       </a>
@@ -53,7 +60,7 @@ export default function ContactPage() {
                   <div>
                     <p className="eyebrow mb-2">Email</p>
                     <a href={mailLink} className="font-serif text-2xl text-ink hover:text-gold break-all">
-                      {site.email}
+                      {s.email}
                     </a>
                   </div>
                 </Reveal>
@@ -61,20 +68,20 @@ export default function ContactPage() {
                   <div>
                     <p className="eyebrow mb-2">Visit the studio</p>
                     <address className="not-italic text-ink-soft leading-relaxed">
-                      {site.address.line1}
+                      {s.address.line1}
                       <br />
-                      {site.address.line2}
+                      {s.address.line2}
                       <br />
-                      {site.address.line3}
+                      {s.address.line3}
                     </address>
                   </div>
                 </Reveal>
                 <Reveal delay={0.15}>
                   <div className="flex gap-6 text-sm uppercase tracking-[0.18em]">
-                    <a href={site.social.instagram} target="_blank" rel="noopener noreferrer" className="link-underline text-gold">
+                    <a href={s.social.instagram} target="_blank" rel="noopener noreferrer" className="link-underline text-gold">
                       Instagram
                     </a>
-                    <a href={site.social.youtube} target="_blank" rel="noopener noreferrer" className="link-underline text-gold">
+                    <a href={s.social.youtube} target="_blank" rel="noopener noreferrer" className="link-underline text-gold">
                       YouTube
                     </a>
                     <a href={whatsappLink()} target="_blank" rel="noopener noreferrer" className="link-underline text-gold">
@@ -108,12 +115,12 @@ export default function ContactPage() {
           {/* Floating directions card */}
           <div className="glass ctx-light pointer-events-auto absolute bottom-6 left-1/2 w-[90%] max-w-md -translate-x-1/2 rounded-xl px-7 py-6 sm:left-8 sm:translate-x-0">
             <span className="eyebrow">Find us</span>
-            <p className="font-serif text-ink mt-2 text-xl">{site.address.line2}</p>
+            <p className="font-serif text-ink mt-2 text-xl">{s.address.line2}</p>
             <p className="text-ink-soft mt-1 text-sm">
-              {site.address.line1}, {site.address.line3}
+              {s.address.line1}, {s.address.line3}
             </p>
             <a
-              href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(site.address.mapsQuery)}`}
+              href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(s.address.mapsQuery)}`}
               target="_blank"
               rel="noopener noreferrer"
               className="font-syne bg-gold text-ink-deep hover:bg-gold-soft mt-5 inline-flex items-center gap-2 rounded-full px-6 py-3 text-[0.78rem] font-bold uppercase tracking-[0.12em] transition-colors"

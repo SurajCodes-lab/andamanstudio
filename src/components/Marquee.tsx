@@ -27,7 +27,7 @@ export default function Marquee() {
       <div className="flex w-max animate-marquee gap-8 whitespace-nowrap">
         {row.map((w, i) => (
           <span key={i} className="flex items-center gap-8">
-            <span className="font-serif text-4xl italic text-ink sm:text-6xl">{w}</span>
+            <span className="font-serif text-4xl text-ink sm:text-6xl">{w}</span>
             <span className="text-gold text-2xl sm:text-3xl">✦</span>
           </span>
         ))}

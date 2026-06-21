@@ -1,10 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { site } from "@/data/site";
 import { catalog } from "@/data/catalog";
+import { saveEnquiry } from "@/app/contact/actions";
+import { useSite } from "./SiteProvider";
 
 export default function ContactForm() {
+  const site = useSite(); // live WhatsApp number from admin Settings
   const [form, setForm] = useState({ name: "", date: "", pkg: "", message: "" });
   const [sent, setSent] = useState(false);
 
@@ -21,6 +23,8 @@ export default function ContactForm() {
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
+    // Capture the enquiry (fire-and-forget) then hand off to WhatsApp.
+    void saveEnquiry(form).catch(() => {});
     window.open(whatsappHref, "_blank", "noopener,noreferrer");
     setSent(true);
   };

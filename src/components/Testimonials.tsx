@@ -2,21 +2,24 @@
 
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { testimonials } from "@/data/info";
 import Container from "./Container";
 
-export default function Testimonials() {
+type Testimonial = { quote: string; name: string; role: string };
+
+export default function Testimonials({ items }: { items: Testimonial[] }) {
+  const testimonials = items;
   const [i, setI] = useState(0);
   const [paused, setPaused] = useState(false);
 
   useEffect(() => {
-    if (paused) return;
+    if (paused || testimonials.length <= 1) return;
     const reduce = typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reduce) return;
     const t = setInterval(() => setI((v) => (v + 1) % testimonials.length), 6000);
     return () => clearInterval(t);
-  }, [paused]);
+  }, [paused, testimonials.length]);
 
+  if (!testimonials.length) return null;
   const t = testimonials[i];
 
   return (

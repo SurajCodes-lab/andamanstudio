@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { site, whatsappLink, mailLink } from "@/data/site";
 import { categoryNav } from "@/data/categories";
 import Container from "./Container";
+import { getSite } from "@/lib/db/queries";
 
 const explore = [
   { label: "Home", href: "/" },
@@ -11,7 +11,11 @@ const explore = [
   { label: "Contact", href: "/contact" },
 ];
 
-export default function Footer() {
+export default async function Footer() {
+  // Contact facts / social / stat all read from the DB so admin Settings edits reflect.
+  const site = await getSite();
+  const whatsappLink = () => `https://wa.me/${site.whatsapp}?text=${encodeURIComponent("Hi Andaman Studio! I'd like to book a shoot.")}`;
+  const mailLink = `mailto:${site.email}`;
   return (
     <footer className="relative overflow-hidden text-on-deep">
       {/* Ink-deep anchor — the page's single grounding dark band */}
@@ -31,7 +35,7 @@ export default function Footer() {
               The Best at Havelock
             </span>
           </div>
-          <p className="font-serif max-w-md text-2xl italic leading-snug text-gold-soft sm:text-right sm:text-[1.7rem]">
+          <p className="font-serif max-w-md text-2xl leading-snug text-gold-soft sm:text-right sm:text-[1.7rem]">
             Capturing the Andamans, one frame at a time.
           </p>
         </div>
@@ -55,7 +59,7 @@ export default function Footer() {
                 <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>
               </a>
               <a
-                href={site.brochureUrl}
+                href={site.brochureUrl ?? "#"}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 rounded-full border border-on-deep/30 px-6 py-3.5 text-sm uppercase tracking-[0.16em] text-on-deep transition-colors duration-300 hover:border-gold-soft hover:text-gold-soft"
@@ -129,6 +133,10 @@ export default function Footer() {
 
         <div className="flex flex-col items-center justify-between gap-3 border-t border-on-deep/12 py-8 text-xs text-on-deep/45 sm:flex-row">
           <p>© {new Date().getFullYear()} {site.name}. All rights reserved.</p>
+          <div className="flex items-center gap-5">
+            <Link href="/privacy-policy" className="hover:text-on-deep">Privacy Policy</Link>
+            <Link href="/terms-and-conditions" className="hover:text-on-deep">Terms &amp; Conditions</Link>
+          </div>
           <p className="uppercase tracking-[0.24em]">Havelock Island · Andaman & Nicobar</p>
         </div>
       </Container>

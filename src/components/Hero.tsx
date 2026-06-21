@@ -12,6 +12,7 @@ type CTA = { label: string; href: string; external?: boolean; primary?: boolean 
 
 export default function Hero({
   image,
+  imageMobile,
   videoSrc,
   youtubeId,
   eyebrow,
@@ -20,6 +21,7 @@ export default function Hero({
   ctas = [],
 }: {
   image: string;
+  imageMobile?: string;
   videoSrc?: string;
   youtubeId?: string;
   eyebrow?: string;
@@ -42,6 +44,17 @@ export default function Hero({
     >
       {/* Bright full-bleed photo — the foundation */}
       <motion.div style={{ y, scale }} className="absolute inset-0">
+        {/* Mobile gets its own portrait-friendly still (no cropped video). */}
+        <Image
+          src={imageMobile || image}
+          alt="Andaman Studio photography"
+          fill
+          preload
+          sizes="100vw"
+          placeholder="blur"
+          blurDataURL={BLUR}
+          className="object-cover sm:hidden"
+        />
         <Image
           src={image}
           alt="Andaman Studio photography"
@@ -50,7 +63,7 @@ export default function Hero({
           sizes="100vw"
           placeholder="blur"
           blurDataURL={BLUR}
-          className="object-cover"
+          className="hidden object-cover sm:block"
         />
         {videoSrc && (
           <video
@@ -65,36 +78,34 @@ export default function Hero({
             }`}
           />
         )}
-        {youtubeId && <HeroVideo youtubeId={youtubeId} />}
+        {/* Video only from sm+ — on mobile a 16:9 YouTube frame crops badly, so we show the still image instead. */}
+        {youtubeId && (
+          <div className="absolute inset-0 hidden sm:block">
+            <HeroVideo youtubeId={youtubeId} />
+          </div>
+        )}
       </motion.div>
 
       {/* Scroll-catcher — sits above the YouTube iframe so the player can
           never swallow the wheel/scroll. CTAs (z-10+) stay above this. */}
       <div aria-hidden className="absolute inset-0 z-[1]" />
 
-      {/* Cinematic grade — vignette + veil keep the footage rich while
-          subduing any branding/title-cards inside the reel */}
-      <div className="pointer-events-none absolute inset-0 bg-ink-deep/25" />
+      {/* Cinematic grade — light base keeps the footage visible; the dark backing
+          is a localized corner gradient anchored to the lower-left where the copy
+          sits, so the rest of the video (and its subject) stays clear. */}
+      <div className="pointer-events-none absolute inset-0 bg-ink-deep/8" />
       <div
         className="pointer-events-none absolute inset-0"
-        style={{ background: "radial-gradient(125% 90% at 50% 38%, transparent 28%, rgba(10,8,4,0.7) 100%)" }}
+        style={{ background: "radial-gradient(140% 100% at 55% 30%, transparent 50%, rgba(10,8,4,0.4) 100%)" }}
       />
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink-deep/95 via-ink-deep/45 to-ink-deep/15" />
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-ink-deep/60 via-transparent to-transparent" />
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{ background: "linear-gradient(to top right, rgba(10,8,4,0.92) 0%, rgba(10,8,4,0.6) 20%, rgba(10,8,4,0.18) 42%, transparent 60%)" }}
+      />
 
-      {/* Editorial meta-bar + frame brackets */}
-      <motion.div
-        style={{ opacity: fade }}
-        className="pointer-events-none absolute inset-x-0 top-0 z-10 hidden items-center justify-between px-5 pt-24 sm:flex sm:px-8"
-      >
-        <span className="meta text-white/70">Est. Havelock · Andaman Islands</span>
-        <span className="meta text-white/70">11.98°N 93.00°E · 4K · 24FPS</span>
-      </motion.div>
-      <span className="pointer-events-none absolute left-5 top-32 hidden h-6 w-6 border-l border-t border-white/30 sm:block sm:left-8" />
-      <span className="pointer-events-none absolute right-5 top-32 hidden h-6 w-6 border-r border-t border-white/30 sm:block sm:right-8" />
-      <span className="v-label pointer-events-none absolute left-4 top-1/2 z-10 hidden -translate-y-1/2 text-white/50 lg:block">
-        Andaman Studio — Showreel
-      </span>
+      {/* Minimal editorial frame brackets (no text) */}
+      <span className="pointer-events-none absolute left-5 top-32 hidden h-6 w-6 border-l border-t border-white/25 sm:block sm:left-8" />
+      <span className="pointer-events-none absolute right-5 top-32 hidden h-6 w-6 border-r border-t border-white/25 sm:block sm:right-8" />
 
       {/* Copy — editorial, lower-left */}
       <motion.div
@@ -120,13 +131,9 @@ export default function Hero({
                 initial={{ y: "110%" }}
                 animate={{ y: 0 }}
                 transition={{ delay: 0.45 + i * 0.13, duration: 1, ease: [0.22, 1, 0.36, 1] }}
-                className="block whitespace-nowrap text-[clamp(2.75rem,8vw,7rem)] leading-[0.98]"
+                className="block whitespace-nowrap text-[clamp(2.25rem,5.5vw,4.75rem)] leading-[1.0]"
               >
-                {line.em ? (
-                  <em className="font-serif italic text-gold-soft">{line.text}</em>
-                ) : (
-                  line.text
-                )}
+                {line.em ? <span className="text-gold-soft">{line.text}</span> : line.text}
               </motion.span>
             </span>
           ))}
@@ -143,12 +150,23 @@ export default function Hero({
           </motion.p>
         )}
 
+        {/* Social proof — above the fold, right beside the CTAs */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.05, duration: 0.8 }}
+          className="mt-7 flex items-center gap-3 text-sm text-white/90"
+        >
+          <span className="text-gold-soft tracking-[0.1em]">★★★★★</span>
+          <span><span className="font-semibold text-white">Rated 5.0</span> · 10,000+ travellers photographed · Havelock&apos;s highest-rated studio</span>
+        </motion.div>
+
         {ctas.length > 0 && (
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1.15, duration: 0.8 }}
-            className="mt-10 flex flex-col gap-4 sm:flex-row"
+            className="mt-7 flex flex-col gap-4 sm:flex-row"
           >
             {ctas.map((cta) =>
               cta.external ? (
@@ -185,18 +203,9 @@ export default function Hero({
         )}
       </motion.div>
 
-      {/* Modern bottom utility bar */}
-      <motion.div style={{ opacity: fade }} className="absolute inset-x-0 bottom-0 z-10 border-t border-white/15 backdrop-blur-[2px]">
-        <div className="mx-auto flex max-w-[1600px] items-center justify-between gap-4 px-5 py-3.5 sm:px-8">
-          <span className="meta flex items-center gap-2 text-white/75">
-            <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-gold" /> Showreel · REC
-          </span>
-          <span className="meta hidden text-white/55 md:block">Cinematic photography &amp; film · Havelock Island</span>
-          <span className="meta flex items-center gap-2 text-white/75">
-            Scroll
-            <motion.span animate={{ y: [0, 4, 0] }} transition={{ repeat: Infinity, duration: 1.6, ease: "easeInOut" }}>↓</motion.span>
-          </span>
-        </div>
+      {/* Minimal scroll cue (no text) */}
+      <motion.div style={{ opacity: fade }} className="pointer-events-none absolute inset-x-0 bottom-6 z-10 flex justify-center">
+        <motion.span animate={{ y: [0, 6, 0] }} transition={{ repeat: Infinity, duration: 1.6, ease: "easeInOut" }} className="text-lg text-white/50">↓</motion.span>
       </motion.div>
     </section>
   );

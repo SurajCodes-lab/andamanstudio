@@ -41,9 +41,13 @@ export default function ParallaxImage({
         <Image src={src} alt={alt} fill preload={priority} sizes={sizes} placeholder="blur" blurDataURL={BLUR} className="object-cover" />
       </motion.div>
       {caption && (
-        <span className="meta absolute bottom-3 left-3 z-[4] text-white/85 mix-blend-difference">
+        <span className="meta absolute bottom-3 left-3 z-[4] rounded bg-ink-deep/55 px-2 py-1 text-white/90 backdrop-blur-sm">
           {caption}
         </span>
+      )}
+      {/* legibility floor: a whisper of shade at the foot so captions never vanish on a bright frame */}
+      {caption && (
+        <span className="pointer-events-none absolute inset-x-0 bottom-0 z-[3] h-16 bg-gradient-to-t from-ink-deep/40 to-transparent" />
       )}
     </div>
   );

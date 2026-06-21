@@ -40,7 +40,7 @@ export default function CategorySignature({
             <h2 className="display mt-5 text-[clamp(2.5rem,6vw,5rem)] leading-[0.98] text-white">
               <KineticText text="Two of you," />
               <br />
-              <KineticText text="one timeless film." className="italic text-gold-soft" />
+              <KineticText text="one timeless film." className="text-gold-soft" />
             </h2>
             <p className="mx-auto mt-6 max-w-xl text-on-deep/70">{category.longDescription}</p>
           </div>

@@ -2,32 +2,27 @@
 
 import Image from "next/image";
 import { motion } from "motion/react";
-import { site } from "@/data/site";
-import { allGalleryImages } from "@/data/gallery";
 import Container from "./Container";
 import Reveal from "./Reveal";
+import { useSite } from "./SiteProvider";
 
 // A teaser grid that drives visitors to the studio's Instagram.
-const picks = [
-  allGalleryImages[2],
-  allGalleryImages[14],
-  allGalleryImages[26],
-  allGalleryImages[39],
-  allGalleryImages[51],
-  allGalleryImages[63],
-].filter(Boolean);
-
-export default function InstagramStrip() {
+export default function InstagramStrip({ images }: { images: string[] }) {
+  const site = useSite();
+  const picks = images.filter(Boolean);
   return (
     <section className="bg-ink-deep relative overflow-hidden py-24 sm:py-32">
       <Container>
         <div className="mb-12 flex flex-col items-start justify-between gap-5 sm:flex-row sm:items-end">
           <div>
             <span className="tag mb-5">✦ On the grid</span>
-            <h2 className="display text-paper text-4xl sm:text-5xl">
+            <h2 className="display text-on-deep text-4xl sm:text-5xl">
               Follow the journey
               <span className="text-gradient"> daily.</span>
             </h2>
+            <p className="mt-3 max-w-md text-on-deep/65">
+              New frames from the islands every week — behind the scenes, fresh edits and golden-hour moments.
+            </p>
           </div>
           <Reveal delay={0.1}>
             <a

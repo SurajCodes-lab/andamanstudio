@@ -18,7 +18,7 @@ export default function AerialStrip({
 }) {
   const row = [...images, ...images];
   return (
-    <section className="relative overflow-hidden bg-ink-deep py-24 text-on-deep sm:py-32">
+    <section className="relative overflow-hidden bg-ink-deep py-16 text-on-deep sm:py-32">
       {/* letterbox bars */}
       <div className="pointer-events-none absolute inset-x-0 top-0 h-8 bg-black/60" />
       <div className="pointer-events-none absolute inset-x-0 bottom-0 h-8 bg-black/60" />
@@ -31,7 +31,7 @@ export default function AerialStrip({
         <h2 className="display text-[clamp(2.75rem,7vw,6rem)] leading-[0.92] text-white">
           <KineticText text="The islands," />
           <br />
-          <KineticText text="from above." className="italic text-gold-soft" />
+          <KineticText text="from above." className="text-gold-soft" />
         </h2>
         <p className="mt-6 max-w-xl text-on-deep/70">
           Sweeping aerial reels of the coastline, forest and turquoise shallows — every RAW file shared with you.

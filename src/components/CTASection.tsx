@@ -1,7 +1,9 @@
+"use client";
+
 import Image from "next/image";
-import { whatsappLink, telLink, site } from "@/data/site";
 import Reveal from "./Reveal";
 import { BLUR } from "@/lib/blur";
+import { useSite, useWaLink } from "./SiteProvider";
 
 export default function CTASection({
   image = "/img/sunset/best-sunset-photography-in-andaman-islands.webp",
@@ -12,6 +14,9 @@ export default function CTASection({
   title?: string;
   text?: string;
 }) {
+  const site = useSite();
+  const wa = useWaLink("Hi Andaman Studio! I'd like to book a session.");
+  const tel = `tel:${(site.phones[0] ?? "").replace(/\s/g, "")}`;
   return (
     <section className="relative overflow-hidden">
       <div className="relative h-[70vh] min-h-[480px] w-full">
@@ -32,7 +37,7 @@ export default function CTASection({
             <Reveal delay={0.15}>
               <div className="mt-9 flex flex-col items-center justify-center gap-4 sm:flex-row">
                 <a
-                  href={whatsappLink()}
+                  href={wa}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="rounded-full bg-gold px-8 py-3.5 text-sm uppercase tracking-[0.16em] text-ink-deep transition-colors duration-300 hover:bg-gold-soft"
@@ -40,7 +45,7 @@ export default function CTASection({
                   WhatsApp Us
                 </a>
                 <a
-                  href={telLink}
+                  href={tel}
                   className="rounded-full border border-ink/25 px-8 py-3.5 text-sm uppercase tracking-[0.16em] text-ink transition-colors duration-300 hover:bg-ink hover:text-paper"
                 >
                   {site.phones[0]}

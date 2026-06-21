@@ -4,6 +4,7 @@ import PageHero from "@/components/PageHero";
 import Container from "@/components/Container";
 import ServicesWall from "@/components/ServicesWall";
 import { whatsappLink } from "@/data/site";
+import { getServices, getCatalog } from "@/lib/db/queries";
 
 export const metadata: Metadata = {
   title: "Services — The Work",
@@ -12,7 +13,8 @@ export const metadata: Metadata = {
   alternates: { canonical: "/services" },
 };
 
-export default function ServicesPage() {
+export default async function ServicesPage() {
+  const [services, catalog] = await Promise.all([getServices(), getCatalog()]);
   return (
     <>
       <PageHero
@@ -27,7 +29,7 @@ export default function ServicesPage() {
       {/* One continuous image-only bento wall — no prices, no bands */}
       <section className="sec-paper py-16 sm:py-24">
         <Container size="wide">
-          <ServicesWall />
+          <ServicesWall services={services} categories={catalog.map((c) => ({ id: c.id, title: c.title }))} />
         </Container>
       </section>
 
@@ -39,7 +41,7 @@ export default function ServicesPage() {
         <Container className="relative">
           <span className="meta text-gold">Ready when you are</span>
           <h2 className="display mx-auto mt-4 max-w-[16ch] text-[clamp(2.25rem,6vw,5rem)] leading-[0.98] text-white">
-            Twelve shoots. <span className="font-serif italic text-gold-soft">One message.</span>
+            Twelve shoots. <span className="font-serif text-gold-soft">One message.</span>
           </h2>
           <p className="mx-auto mt-6 max-w-xl text-on-deep/70">
             Tell us your dates and the moments you want to keep — we&apos;ll shape the perfect session across the islands.

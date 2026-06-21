@@ -2,8 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { services } from "@/data/services";
-import { catalog } from "@/data/catalog";
+import type { Service } from "@/data/services";
 import ServiceCard from "./ServiceCard";
 
 // 12-col bento — a tall 2-row anchor + gap-free rows of 3.
@@ -24,11 +23,17 @@ const LABEL: Record<string, string> = {
   property: "Property",
 };
 
-export default function ServicesWall() {
+export default function ServicesWall({
+  services,
+  categories,
+}: {
+  services: Service[];
+  categories: { id: string; title: string }[];
+}) {
   const [filter, setFilter] = useState("all");
   const filters = useMemo(
-    () => [{ id: "all", label: "All work" }, ...catalog.map((c) => ({ id: c.id, label: LABEL[c.id] ?? c.title }))],
-    []
+    () => [{ id: "all", label: "All work" }, ...categories.map((c) => ({ id: c.id, label: LABEL[c.id] ?? c.title }))],
+    [categories]
   );
   const shown = filter === "all" ? services : services.filter((s) => s.relatedCategoryId === filter);
 

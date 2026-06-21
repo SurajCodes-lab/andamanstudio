@@ -3,7 +3,7 @@ import PageHero from "@/components/PageHero";
 import Container from "@/components/Container";
 import FilterableGallery from "@/components/FilterableGallery";
 import CTASection from "@/components/CTASection";
-import { allGalleryImages } from "@/data/gallery";
+import { getGallery } from "@/lib/db/queries";
 
 export const metadata: Metadata = {
   title: "Gallery",
@@ -12,11 +12,12 @@ export const metadata: Metadata = {
   alternates: { canonical: "/gallery" },
 };
 
-export default function GalleryPage() {
+export default async function GalleryPage() {
+  const { galleryCategories, allGalleryImages } = await getGallery();
   return (
     <>
       <PageHero
-        eyebrow={`${allGalleryImages.length} frames · 8 categories`}
+        eyebrow={`${allGalleryImages.length} frames · ${galleryCategories.length} categories`}
         title="The Gallery"
         intro="A scroll through the islands as we see them — light, colour and the people who make each frame. Filter by the shoot you're dreaming of."
         image="/img/sunset/best-sunset-photography-in-andaman-islands.webp"
@@ -25,7 +26,7 @@ export default function GalleryPage() {
 
       <section className="sec-paper relative overflow-hidden pb-20 pt-8 sm:pb-28">
         <Container size="wide" className="relative">
-          <FilterableGallery />
+          <FilterableGallery galleryCategories={galleryCategories} allGalleryImages={allGalleryImages} />
         </Container>
       </section>
 

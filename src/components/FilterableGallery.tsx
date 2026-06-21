@@ -2,10 +2,17 @@
 
 import { useMemo, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { galleryCategories, allGalleryImages } from "@/data/gallery";
 import GalleryGrid from "./GalleryGrid";
 
-export default function FilterableGallery() {
+type GalleryCategory = { id: string; label: string; images: string[] };
+
+export default function FilterableGallery({
+  galleryCategories,
+  allGalleryImages,
+}: {
+  galleryCategories: GalleryCategory[];
+  allGalleryImages: string[];
+}) {
   const [active, setActive] = useState("all");
 
   const tabs = useMemo(

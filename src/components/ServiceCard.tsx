@@ -26,7 +26,7 @@ export default function ServiceCard({
       transition={{ duration: 0.7, delay: (index % 4) * 0.06, ease: [0.22, 1, 0.36, 1] }}
       className="h-full"
     >
-      <Link href={`/${service.slug}`} className="group relative block h-full min-h-[11rem] overflow-hidden">
+      <Link href={`/${service.slug}`} className="group relative block h-full min-h-[11rem] overflow-hidden ring-0 ring-gold/0 transition-all duration-500 hover:ring-1 hover:ring-gold/50">
         <Image
           src={service.heroImage}
           alt={service.title}

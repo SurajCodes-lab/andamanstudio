@@ -6,9 +6,10 @@ import SectionHeading from "@/components/SectionHeading";
 import Reveal from "@/components/Reveal";
 import Accordion from "@/components/Accordion";
 import CTASection from "@/components/CTASection";
-import { catalog, formatINR } from "@/data/catalog";
+import { formatINR } from "@/data/catalog";
 import { bookingSteps, faqs, terms } from "@/data/info";
 import { whatsappLink } from "@/data/site";
+import { getCatalog } from "@/lib/db/queries";
 
 export const metadata: Metadata = {
   title: "Packages & Pricing",
@@ -17,7 +18,8 @@ export const metadata: Metadata = {
   alternates: { canonical: "/packages" },
 };
 
-export default function PackagesPage() {
+export default async function PackagesPage() {
+  const catalog = await getCatalog();
   const totalTiers = catalog.reduce((n, c) => n + c.products.length, 0);
   const lowest = Math.min(...catalog.flatMap((c) => c.products.map((p) => p.price)));
   const fromOf = (c: (typeof catalog)[number]) => Math.min(...c.products.map((p) => p.price));

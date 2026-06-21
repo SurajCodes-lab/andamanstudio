@@ -48,7 +48,7 @@ export const site = {
 export const nav: { label: string; href: string }[] = [
   { label: "Home", href: "/" },
   { label: "Services", href: "/services" },
-  { label: "Packages", href: "/packages" },
+  { label: "Pricing", href: "/packages" },
   { label: "Gallery", href: "/gallery" },
   { label: "About", href: "/about" },
   { label: "Contact", href: "/contact" },

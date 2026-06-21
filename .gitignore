@@ -40,6 +40,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# Runtime-uploaded images (live on the server's disk, not in git)
+/public/uploads/
+
 # --- QA / tooling artifacts (not part of the website) ---
 # Playwright + Puppeteer QA tests and screenshot scripts
 /tests/

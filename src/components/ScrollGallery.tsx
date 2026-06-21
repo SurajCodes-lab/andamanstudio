@@ -49,7 +49,7 @@ export default function ScrollGallery({
   }, [frames.length]);
 
   return (
-    <section ref={sectionRef} className="relative bg-paper" style={{ height: "300vh" }}>
+    <section ref={sectionRef} className="relative bg-paper h-[220vh] sm:h-[300vh]">
       <div className="sticky top-0 flex h-screen flex-col justify-center overflow-hidden">
         {/* Heading */}
         <div className="mb-8 px-5 sm:px-[6vw]">

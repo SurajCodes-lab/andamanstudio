@@ -10,10 +10,10 @@ import GalleryGrid from "@/components/GalleryGrid";
 import VideoReel from "@/components/VideoReel";
 import CTASection from "@/components/CTASection";
 import CategorySignature from "@/components/CategorySignature";
-import { getFullCategory, categorySlugs, categories } from "@/data/categories";
-import { getService } from "@/data/services";
+import { categorySlugs } from "@/data/categories";
 import { formatINR } from "@/data/catalog";
 import { getCategoryTheme } from "@/data/categoryThemes";
+import { getFullCategory, getCategories, getService } from "@/lib/db/queries";
 
 export function generateStaticParams() {
   return categorySlugs.map((slug) => ({ slug }));
@@ -25,13 +25,13 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const cat = getFullCategory(slug);
+  const cat = await getFullCategory(slug);
   if (!cat) return {};
   return {
-    title: `${cat.title} — Packages, Photos & Films`,
-    description: cat.longDescription,
+    title: cat.metaTitle ?? `${cat.title} — Packages, Photos & Films`,
+    description: cat.metaDescription ?? cat.longDescription,
     alternates: { canonical: `/category/${slug}` },
-    openGraph: { title: cat.title, description: cat.longDescription, images: [cat.heroImage] },
+    openGraph: { title: cat.metaTitle ?? cat.title, description: cat.metaDescription ?? cat.longDescription, images: [cat.heroImage] },
   };
 }
 
@@ -41,12 +41,12 @@ export default async function CategoryPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const cat = getFullCategory(slug);
+  const cat = await getFullCategory(slug);
   if (!cat) notFound();
 
   const fromPrice = Math.min(...cat.products.map((p) => p.price));
-  const services = cat.serviceSlugs.map(getService).filter(Boolean);
-  const others = categories.filter((c) => c.slug !== slug);
+  const services = (await Promise.all(cat.serviceSlugs.map((s) => getService(s)))).filter(Boolean);
+  const others = (await getCategories()).filter((c) => c.slug !== slug);
   const theme = getCategoryTheme(slug);
 
   return (
@@ -88,7 +88,7 @@ export default async function CategoryPage({
           <div className="mb-12">
             <span className="eyebrow">{theme.kicker} · Pricing</span>
             <h2 className="display text-ink mt-3 text-4xl sm:text-5xl">
-              {cat.title} <span className="text-gradient">packages</span>
+              {cat.title.replace(/\s*packages?$/i, "")} <span className="text-gradient">packages</span>
             </h2>
             <p className="text-ink-soft mt-4 max-w-xl">{theme.tagline} {cat.blurb}</p>
           </div>

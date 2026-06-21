@@ -47,7 +47,7 @@ function PanelView({ panel, index }: { panel: Panel; index: number }) {
               <p className="mt-3 max-w-md text-base text-white/85 sm:text-lg">{panel.sub}</p>
             )}
           </div>
-          <span className="font-serif hidden text-7xl italic text-white/20 sm:block">
+          <span className="font-serif hidden text-7xl text-white/20 sm:block">
             {String(index + 1).padStart(2, "0")}
           </span>
         </div>

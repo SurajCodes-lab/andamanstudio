@@ -9,10 +9,10 @@ import ParallaxImage from "@/components/ParallaxImage";
 import GalleryGrid from "@/components/GalleryGrid";
 import ProductCard from "@/components/ProductCard";
 import CTASection from "@/components/CTASection";
-import { getService, serviceSlugs, services } from "@/data/services";
-import { getCategory } from "@/data/catalog";
+import { serviceSlugs } from "@/data/services";
 import { getCategoryTheme } from "@/data/categoryThemes";
 import { getServiceTheme } from "@/data/serviceThemes";
+import { getService, getServices, getFullCategory } from "@/lib/db/queries";
 import ServiceSignature from "@/components/ServiceSignature";
 
 export function generateStaticParams() {
@@ -25,15 +25,15 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const service = getService(slug);
+  const service = await getService(slug);
   if (!service) return {};
   return {
-    title: service.title,
-    description: service.intro,
+    title: service.metaTitle ?? service.title,
+    description: service.metaDescription ?? service.intro,
     alternates: { canonical: `/${slug}` },
     openGraph: {
-      title: `${service.title} — Andaman Studio`,
-      description: service.intro,
+      title: service.metaTitle ?? `${service.title} — Andaman Studio`,
+      description: service.metaDescription ?? service.intro,
       images: [service.heroImage],
     },
   };
@@ -45,11 +45,11 @@ export default async function ServicePage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const service = getService(slug);
+  const service = await getService(slug);
   if (!service) notFound();
 
-  const category = getCategory(service.relatedCategoryId);
-  const others = services.filter((s) => s.slug !== slug).slice(0, 3);
+  const category = await getFullCategory(service.relatedCategoryId);
+  const others = (await getServices()).filter((s) => s.slug !== slug).slice(0, 3);
   const theme = getServiceTheme(slug);
 
   return (
@@ -72,7 +72,7 @@ export default async function ServicePage({
             <div className="order-2 flex flex-col justify-center lg:order-1">
               <Reveal>
                 <span className="tag mb-6">✦ The experience</span>
-                <p className="font-serif text-ink text-2xl italic leading-snug sm:text-3xl">
+                <p className="font-serif text-ink text-2xl leading-snug sm:text-3xl">
                   {service.intro}
                 </p>
               </Reveal>

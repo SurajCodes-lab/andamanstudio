@@ -9,6 +9,7 @@ import Testimonials from "@/components/Testimonials";
 import CTASection from "@/components/CTASection";
 import { site } from "@/data/site";
 import { tips } from "@/data/info";
+import { getTestimonials } from "@/lib/db/queries";
 
 export const metadata: Metadata = {
   title: "About Us",
@@ -26,7 +27,8 @@ const equipment = [
   "Backup storage for every shoot",
 ];
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const testimonials = await getTestimonials();
   return (
     <>
       <PageHero
@@ -46,7 +48,7 @@ export default function AboutPage() {
               <SectionHeading
                 index="A · 01"
                 eyebrow="Our story"
-                title={<>Island-born, <em className="font-serif italic text-gold">cinematic</em> at heart.</>}
+                title={<>Island-born, <em className="font-serif text-gold">cinematic</em> at heart.</>}
                 intro="Introducing our elite crew, where creativity meets precision. We transform your vision into captivating images with high-end cameras and lighting, bringing your concepts to life with unparalleled finesse. Your moments, our expertise — together, we craft photographic masterpieces."
               />
               <Reveal delay={0.15}>
@@ -145,7 +147,7 @@ export default function AboutPage() {
         </Container>
       </section>
 
-      <Testimonials />
+      <Testimonials items={testimonials} />
 
       <CTASection />
     </>
